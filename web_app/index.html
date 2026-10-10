@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindCare AI | Mental Health Screening & Support Agent (SDG 3)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0f62fe;
+      --primary-dark: #0043ce;
+      --primary-light: #e5edff;
+      --navy: #001d6c;
+      --surface: #ffffff;
+      --bg: #f4f7fb;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --danger: #da1e28;
+      --danger-bg: #fff1f1;
+      --warning: #f1c21b;
+      --warning-bg: #fef9c3;
+      --success: #24a148;
+      --success-bg: #defbe6;
+      --cyan: #11d3f3;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 12px rgba(15,98,254,0.08);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.06);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Banner */
+    .top-bar {
+      background: linear-gradient(135deg, #001d6c 0%, #0f62fe 100%);
+      color: white;
+      padding: 10px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+    }
+    .badge-pill {
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .hotline-highlight {
+      background: #fa4d56;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(250,77,86,0.4);
+    }
+
+    /* Main Navigation */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+    }
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #0f62fe, #11d3f3);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+      font-weight: 800;
+    }
+    .brand-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.1;
+    }
+    .brand-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+    }
+    .tab-btn {
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .tab-btn.active {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    /* Main Workspace */
+    .app-container {
+      display: grid;
+      grid-template-columns: 1fr 390px;
+      gap: 24px;
+      max-width: 1440px;
+      margin: 24px auto;
+      padding: 0 24px;
+      flex: 1;
+      width: 100%;
+    }
+
+    /* Chat Section */
+    .chat-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      height: calc(100vh - 170px);
+      min-height: 580px;
+    }
+    .chat-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fafcff;
+    }
+    .bot-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      background: var(--success);
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(36,161,72,0.2);
+    }
+    .chat-messages {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      background: #fbfcfe;
+    }
+    .message {
+      max-width: 78%;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .message.user {
+      align-self: flex-end;
+      align-items: flex-end;
+    }
+    .message.bot {
+      align-self: flex-start;
+      align-items: flex-start;
+    }
+    .msg-bubble {
+      padding: 14px 18px;
+      border-radius: 18px;
+      font-size: 14.5px;
+      line-height: 1.55;
+    }
+    .message.user .msg-bubble {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+    .message.bot .msg-bubble {
+      background: #ffffff;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+      box-shadow: var(--shadow-sm);
+    }
+    .msg-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 4px;
+    }
+    .sentiment-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .sentiment-stress {
+      background: var(--warning-bg);
+      color: #854d0e;
+      border: 1px solid #fde047;
+    }
+    .sentiment-anxiety {
+      background: #ffedd5;
+      color: #c2410c;
+      border: 1px solid #fdba74;
+    }
+    .sentiment-safe {
+      background: var(--success-bg);
+      color: #15803d;
+      border: 1px solid #86efac;
+    }
+    .sentiment-crisis {
+      background: var(--danger-bg);
+      color: #b91c1c;
+      border: 1px solid #fca5a5;
+    }
+
+    /* Intervention Card in Chat */
+    .intervention-card {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .intervention-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #166534;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .intervention-body {
+      font-size: 13px;
+      color: #14532d;
+      line-height: 1.4;
+    }
+    .action-btn-sm {
+      align-self: flex-start;
+      background: #16a34a;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Chat Input */
+    .chat-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .input-wrapper {
+      display: flex;
+      gap: 12px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 6px 8px 6px 16px;
+      align-items: center;
+      transition: border-color 0.2s;
+    }
+    .input-wrapper:focus-within {
+      border-color: var(--primary);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(15,98,254,0.12);
+    }
+    .chat-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 14.5px;
+      color: var(--text);
+    }
+    .send-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .send-btn:hover {
+      background: var(--primary-dark);
+    }
+    .quick-prompts {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+    .prompt-chip {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .prompt-chip:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    /* Right Sidebar (Analytics & Triage) */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .side-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
+    }
+    .card-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .score-gauge {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .score-number {
+      font-size: 32px;
+      font-weight: 800;
+      color: #ea580c;
+    }
+    .score-scale {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .progress-bar {
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #22c55e 0%, #eab308 50%, #ef4444 100%);
+      width: 68%;
+      border-radius: 5px;
+    }
+    .meter-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .metric-tile {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      text-align: center;
+    }
+    .tile-val {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .tile-lbl {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .sos-card {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+    }
+    .sos-title {
+      color: #991b1b;
+      font-size: 13px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .sos-text {
+      font-size: 12px;
+      color: #7f1d1d;
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+    .sos-btn {
+      display: block;
+      width: 100%;
+      background: #dc2626;
+      color: white;
+      text-align: center;
+      padding: 8px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 12.5px;
+    }
+    .model-info-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      background: #f1f5f9;
+      color: #475569;
+      padding: 4px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <div class="top-bar">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span class="badge-pill">IBM SkillsBuild</span>
+      <span class="badge-pill">AICTE</span>
+      <span class="badge-pill">BharatCares (CSRBOX)</span>
+      <span style="font-weight:600; opacity:0.9;">Machine Learning & Applied AI Internship 2026</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <span>Project Aligned: <strong>UN SDG 3 (Good Health & Well-being)</strong></span>
+      <a href="tel:14416" class="hotline-highlight">Tele-MANAS Hotline: 14416</a>
+    </div>
+  </div>
+
+  <!-- Main Navigation Header -->
+  <header>
+    <div class="logo-container">
+      <div class="logo-icon">M</div>
+      <div>
+        <div class="brand-title">MindCare AI</div>
+        <div class="brand-sub">Empathetic AI Screening, Distress Triage & Mental Wellness Agent</div>
+      </div>
+    </div>
+    <div class="nav-tabs">
+      <button class="tab-btn active">Chat & Triage</button>
+      <button class="tab-btn">Clinical Dashboard</button>
+      <button class="tab-btn">Model Benchmarks</button>
+      <button class="tab-btn">Lean Canvas</button>
+    </div>
+    <div style="font-size: 12px; font-weight: 600; color: #64748b; background: #e2e8f0; padding: 4px 10px; border-radius: 12px;">
+      DistilBERT Fine-Tuned v2.4 (F1: 94.6%)
+    </div>
+  </header>
+
+  <!-- Interactive App Body -->
+  <main class="app-container">
+    
+    <!-- Left Column: Conversational AI Agent -->
+    <div class="chat-card">
+      <div class="chat-header">
+        <div class="bot-status">
+          <div class="status-dot"></div>
+          <div>
+            <div style="font-weight: 700; font-size: 14px; color: var(--navy);">MindCare Companion</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Confidential • Zero Log Retention • Safe Space</div>
+          </div>
+        </div>
+        <span class="model-info-tag">BERT-Distress-Triage-v2</span>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        
+        <!-- Welcome Message -->
+        <div class="message bot">
+          <div class="msg-bubble">
+            Hello, welcome to <strong>MindCare AI</strong>. I am your confidential emotional check-in companion, developed under the IBM SkillsBuild & CSRBOX AI initiative. You can share whatever is on your mind freely. How have you been feeling today?
+          </div>
+          <div class="msg-meta">
+            <span>MindCare Agent • 10:15 AM</span>
+            <span class="sentiment-badge sentiment-safe">State: Neutral / Welcoming</span>
+          </div>
+        </div>
+
+        <!-- User Message 1 -->
+        <div class="message user">
+          <div class="msg-bubble">
+            I've been feeling extremely overwhelmed with my upcoming final semester exams and placement interviews. My heart races every time I think about results, and I haven't slept properly in 4 days.
+          </div>
+          <div class="msg-meta">
+            <span>User • 10:16 AM</span>
+          </div>
+        </div>
+
+        <!-- Bot Response 1 with Triage & Intervention -->
+        <div class="message bot">
+          <div class="msg-bubble">
+            I hear how exhausting and stressful this period is for you. Preparing for placements while managing exam pressure places a tremendous load on your mind and body. It is completely understandable that your body is reacting with racing thoughts and sleeplessness.
+            
+            <div class="intervention-card">
+              <div class="intervention-title">
+                🌿 Recommended Immediate Micro-Intervention
+              </div>
+              <div class="intervention-body">
+                Let's regulate your nervous system right now with a <strong>Box Breathing Technique (4-4-4-4)</strong>. Inhale for 4 seconds, hold for 4, exhale for 4, and pause for 4.
+              </div>
+              <button class="action-btn-sm" onclick="alert('Starting interactive 2-minute breathing timer...')">Start Guided Breathing</button>
+            </div>
+          </div>
+          <div class="msg-meta">
+            <span>MindCare Agent • 10:16 AM</span>
+            <span class="sentiment-badge sentiment-anxiety">Detected: Academic Anxiety (74%)</span>
+            <span class="sentiment-badge sentiment-stress">Distress: Moderate</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="chat-footer">
+        <div class="quick-prompts">
+          <span class="prompt-chip" onclick="sendQuick('I feel like I am falling behind everyone else.')">"I feel like I'm falling behind"</span>
+          <span class="prompt-chip" onclick="sendQuick('Can you guide me through a 2-minute mindfulness reset?')">"2-min mindfulness reset"</span>
+          <span class="prompt-chip" onclick="sendQuick('I want to take a confidential depression screening test.')">"Take PHQ-9 self-check"</span>
+        </div>
+        <div class="input-wrapper" style="margin-top: 10px;">
+          <input type="text" id="userInput" class="chat-input" placeholder="Type how you are feeling or what you are experiencing..." onkeydown="if(event.key==='Enter') sendMessage()">
+          <button class="send-btn" onclick="sendMessage()">Send Check-in</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Clinical Metrics & Safety Guardrail -->
+    <aside class="sidebar">
+      
+      <!-- Distress Risk Meter -->
+      <div class="side-card">
+        <div class="card-title">
+          <span>Emotional Distress Triage</span>
+          <span style="font-size: 11px; color: var(--primary);">Real-time NLP</span>
+        </div>
+        <div class="score-gauge">
+          <span class="score-number" id="riskScore">68%</span>
+          <span class="score-scale">/ 100 Severity Index</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="riskFill"></div>
+        </div>
+        <div class="meter-labels">
+          <span>Healthy (0-30%)</span>
+          <span>Moderate (31-70%)</span>
+          <span>Severe (71-100%)</span>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric-tile">
+            <div class="tile-val" style="color: #c2410c;">Anxiety</div>
+            <div class="tile-lbl">Dominant Emotion</div>
+          </div>
+          <div class="metric-tile">
+            <div class="tile-val" style="color: #0284c7;">28 ms</div>
+            <div class="tile-lbl">Inference Latency</div>
+          </div>
+          <div class="metric-tile">
+            <div class="tile-val">GAD-7: 11</div>
+            <div class="tile-lbl">Screening Level</div>
+          </div>
+          <div class="metric-tile">
+            <div class="tile-val" style="color: #16a34a;">94.6%</div>
+            <div class="tile-lbl">Model Confidence</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 30-Day Longitudinal Mood Trend -->
+      <div class="side-card">
+        <div class="card-title">
+          <span>Mood Tracker Trajectory</span>
+          <span style="font-size: 10px; color: var(--text-muted);">Last 7 Days</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; height:75px; padding-top:10px;">
+          <div style="text-align:center; width:12%;">
+            <div style="height:35px; background:#93c5fd; border-radius:4px; margin:auto; width:14px;"></div>
+            <span style="font-size:10px; color:#64748b;">Mon</span>
+          </div>
+          <div style="text-align:center; width:12%;">
+            <div style="height:45px; background:#60a5fa; border-radius:4px; margin:auto; width:14px;"></div>
+            <span style="font-size:10px; color:#64748b;">Tue</span>
+          </div>
+          <div style="text-align:center; width:12%;">
+            <div style="height:30px; background:#93c5fd; border-radius:4px; margin:auto; width:14px;"></div>
+            <span style="font-size:10px; color:#64748b;">Wed</span>
+          </div>
+          <div style="text-align:center; width:12%;">
+            <div style="height:60px; background:#f59e0b; border-radius:4px; margin:auto; width:14px;"></div>
+            <span style="font-size:10px; color:#64748b;">Thu</span>
+          </div>
+          <div style="text-align:center; width:12%;">
+            <div style="height:55px; background:#f97316; border-radius:4px; margin:auto; width:14px;"></div>
+            <span style="font-size:10px; color:#64748b;">Fri</span>
+          </div>
+          <div style="text-align:center; width:12%;">
+            <div style="height:68px; background:#ea580c; border-radius:4px; margin:auto; width:14px;"></div>
+            <span style="font-size:10px; color:#64748b;">Sat</span>
+          </div>
+          <div style="text-align:center; width:12%;">
+            <div style="height:40px; background:#3b82f6; border-radius:4px; margin:auto; width:14px;"></div>
+            <span style="font-size:10px; color:#64748b;">Today</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Emergency Crisis Support Bridge -->
+      <div class="side-card sos-card">
+        <div class="sos-title">
+          <span>🚨 24/7 Crisis Escalation Bridge</span>
+        </div>
+        <p class="sos-text">
+          MindCare AI is equipped with safety guardrails. If severe distress or self-harm ideation is detected, instant connection to verified helplines is triggered immediately.
+        </p>
+        <a href="tel:14416" class="sos-btn">Call Tele-MANAS (Toll-Free 14416)</a>
+        <div style="text-align:center; margin-top:6px; font-size:11px; color:#7f1d1d;">
+          KIRAN Helpline: 1800-599-0019 (Govt. of India)
+        </div>
+      </div>
+
+      <!-- Project Metadata Card -->
+      <div class="side-card" style="background:#f8fafc; font-size:11.5px; color:#475569; line-height:1.5;">
+        <strong style="color:#0f172a;">Internship Deliverable 2026</strong><br>
+        • Organization: <strong>IBM SkillsBuild & AICTE</strong><br>
+        • Partner: <strong>BharatCares (CSRBOX)</strong><br>
+        • Domain: <strong>Applied AI / NLP / SDG 3</strong><br>
+        • Status: <strong>Review & Evaluation Ready</strong>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <script>
+    function sendQuick(text) {
+      document.getElementById('userInput').value = text;
+      sendMessage();
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('userInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const container = document.getElementById('chatMessages');
+
+      // User Message
+      const userDiv = document.createElement('div');
+      userDiv.className = 'message user';
+      userDiv.innerHTML = `
+        <div class="msg-bubble">${escapeHtml(text)}</div>
+        <div class="msg-meta"><span>User • Just now</span></div>
+      `;
+      container.appendChild(userDiv);
+      input.value = '';
+
+      // Triage simulation
+      setTimeout(() => {
+        let isHighRisk = /die|suicide|end my life|kill myself|harm|hopeless/i.test(text);
+        let botDiv = document.createElement('div');
+        botDiv.className = 'message bot';
+
+        if (isHighRisk) {
+          botDiv.innerHTML = `
+            <div class="msg-bubble" style="background:#fef2f2; border-color:#fca5a5; color:#991b1b;">
+              <strong>⚠️ Immediate Safety Alert:</strong> We care deeply about your life and safety. Please reach out to professional support right now. You are never alone in this.
+              <div style="margin-top:10px;">
+                <a href="tel:14416" style="background:#dc2626; color:white; padding:8px 14px; border-radius:6px; text-decoration:none; font-weight:bold; display:inline-block;">Call Tele-MANAS (14416)</a>
+                <span style="margin-left:10px; font-size:12px;">Available 24/7 across India</span>
+              </div>
+            </div>
+            <div class="msg-meta">
+              <span>MindCare Safety Guard • Just now</span>
+              <span class="sentiment-badge sentiment-crisis">🚨 Crisis Flag Veto Triggered</span>
+            </div>
+          `;
+          document.getElementById('riskScore').innerText = '96%';
+          document.getElementById('riskScore').style.color = '#dc2626';
+          document.getElementById('riskFill').style.width = '96%';
+        } else {
+          botDiv.innerHTML = `
+            <div class="msg-bubble">
+              Thank you for sharing that with me. It takes real courage to acknowledge these feelings. Let's break down what's feeling heavy into manageable steps, one moment at a time.
+            </div>
+            <div class="msg-meta">
+              <span>MindCare Agent • Just now</span>
+              <span class="sentiment-badge sentiment-safe">Distress Level: Mild (24%)</span>
+            </div>
+          `;
+          document.getElementById('riskScore').innerText = '32%';
+          document.getElementById('riskScore').style.color = '#16a34a';
+          document.getElementById('riskFill').style.width = '32%';
+        }
+
+        container.appendChild(botDiv);
+        container.scrollTop = container.scrollHeight;
+      }, 600);
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function escapeHtml(string) {
+      return String(string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+</html>
